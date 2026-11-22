@@ -1,0 +1,7 @@
+out/
+datos/
+fuentes.txt
+*.class
+.idea/
+*.iml
+.vscode/

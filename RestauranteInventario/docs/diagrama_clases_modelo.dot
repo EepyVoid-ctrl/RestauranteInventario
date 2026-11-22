@@ -1,0 +1,36 @@
+digraph G {
+  graph [rankdir=TB, nodesep=0.45, ranksep=0.7, fontname="Helvetica", dpi=150];
+  node [shape=record, fontname="Helvetica", fontsize=10, style=filled, fillcolor="#FFF8E7"];
+  edge [fontname="Helvetica", fontsize=9];
+
+  Insumo [label="{«abstract»\nInsumo|- codigo: String\l- nombre: String\l- categoria: String\l- unidadMedida: String\l- stock: double\l- stockMinimo: double\l- costoUnitario: double\l|+ reabastecer(cantidad, costoTotal)\l+ descontar(cantidad)\l+ esCritico(): boolean\l+ getEstado(): String\l+ «abstract» getTipo(): String\l+ «abstract» getAlertaConservacion(): String\l}"];
+  Perecedero [label="{InsumoPerecedero|- fechaCaducidad: LocalDate\l|+ getDiasParaVencer(): long\l+ getTipo(): String\l+ getAlertaConservacion(): String\l}"];
+  NoPerecedero [label="{InsumoNoPerecedero||+ getTipo(): String\l+ getAlertaConservacion(): String\l}"];
+  Ingrediente [label="{Ingrediente|- cantidadPorPorcion: double\l|+ getCosto(): double\l}"];
+  Plato [label="{Plato|- codigo: String\l- nombre: String\l- pvp: double\l- activo: boolean\l|+ getCostoProduccion(): double\l+ getMargenUnitario(): double\l+ getMargenPorcentual(): double\l+ getAdvertenciaPrecio(): String\l+ usaInsumo(Insumo): boolean\l}"];
+  DetalleVenta [label="{DetalleVenta|- cantidad: int\l- precioUnitario: double\l- costoUnitario: double\l- consumoInsumos: Map\l|+ getSubtotal(): double\l+ getUtilidad(): double\l}"];
+  Venta [label="{Venta|- numero: String\l- fecha: LocalDateTime\l|+ getSubtotal(): double\l+ incluyePlato(Plato): boolean\l}"];
+  Factura [label="{Factura|- numero: String\l+ IVA: double = 0.15\l|+ getSubtotal(): double\l+ getIva(): double\l+ getTotal(): double\l+ generarTexto(): String\l}"];
+  Cliente [label="{Cliente|- nombre: String\l- identificacion: String\l- contacto: String\l|+ consumidorFinal(): Cliente\l}"];
+  MetodoPago [label="{«interface»\nMetodoPago||+ getNombre(): String\l+ getInstruccionCobro(): String\l}", fillcolor="#E8F1FF"];
+  Efectivo [label="{PagoEfectivo||}"];
+  Tarjeta [label="{PagoTarjeta||}"];
+  Transf [label="{PagoTransferencia||}"];
+
+  Perecedero -> Insumo [arrowhead=empty];
+  NoPerecedero -> Insumo [arrowhead=empty];
+  Efectivo -> MetodoPago [arrowhead=empty, style=dashed];
+  Tarjeta -> MetodoPago [arrowhead=empty, style=dashed];
+  Transf -> MetodoPago [arrowhead=empty, style=dashed];
+
+  Plato -> Ingrediente [arrowtail=diamond, dir=back, headlabel="1..*", taillabel="1", labeldistance=2];
+  Ingrediente -> Insumo [arrowhead=vee, headlabel="1", taillabel="*", labeldistance=2];
+  Venta -> DetalleVenta [arrowtail=diamond, dir=back, headlabel="1..*", taillabel="1", labeldistance=2];
+  DetalleVenta -> Plato [arrowhead=vee, headlabel="1", taillabel="*", labeldistance=2];
+  Venta -> MetodoPago [arrowhead=vee, headlabel="1", taillabel="*", labeldistance=2];
+  Factura -> Venta [arrowhead=vee, headlabel="1", taillabel="1", labeldistance=2];
+  Factura -> Cliente [arrowhead=vee, headlabel="1", taillabel="*", labeldistance=2];
+
+  {rank=same; Perecedero; NoPerecedero}
+  {rank=same; Efectivo; Tarjeta; Transf}
+}
